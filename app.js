@@ -1,14 +1,13 @@
 // ============ GLOBAL VARIABELS ============ //
-const endpoint =
-  "https://race-dat-v1-default-rtdb.europe-west1.firebasedatabase.app"; // To do: paste url to endpoint
+const endpoint = "http://localhost:3333"; // To do: paste url to endpoint
 let selectedUser;
 
 // ============ READ ============ //
 // Read (GET) all users from Firebase (Database) using REST API
 async function readUsers() {
-  const response = await fetch(`${endpoint}/users.json`);
+  const response = await fetch(`${endpoint}/users`);
   const data = await response.json();
-  const users = Object.keys(data).map((key) => ({ id: key, ...data[key] })); // from object to array
+  const users = Object.keys(data).map(key => ({ id: key, ...data[key] })); // from object to array
   return users;
 }
 
@@ -60,9 +59,12 @@ async function createUser(event) {
 
   // create a new user
   const userAsJson = JSON.stringify(newUser);
-  const response = await fetch(`${endpoint}/users.json`, {
+  const response = await fetch(`${endpoint}/users`, {
     method: "POST",
     body: userAsJson,
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   if (response.ok) {
@@ -103,9 +105,12 @@ async function updateUser(event) {
   // update user
   const userToUpdate = { name, title, mail, image }; // To do: add all fields/ variabels
   const userAsJson = JSON.stringify(userToUpdate);
-  const response = await fetch(`${endpoint}/users/${selectedUser.id}.json`, {
+  const response = await fetch(`${endpoint}/users/${selectedUser.id}`, {
     method: "PUT",
     body: userAsJson,
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
   if (response.ok) {
     // if success, update the users grid
@@ -119,7 +124,7 @@ async function updateUser(event) {
 
 // ================== DELETE ============ //
 async function deleteUser(id) {
-  const response = await fetch(`${endpoint}/users/${id}.json`, {
+  const response = await fetch(`${endpoint}/users/${id}`, {
     method: "DELETE",
   });
   if (response.ok) {
